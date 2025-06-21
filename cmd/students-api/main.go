@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log/slog"
 	"net/http"
 	"os"
@@ -11,20 +10,18 @@ import (
 	"time"
 
 	"github.com/Biswa-bob/student-api/internal/config"
+	"github.com/Biswa-bob/student-api/internal/http/handlers/student"
 )
 
 func main() {
 	// load config
 	cfg := config.MustLoad()
-	fmt.Println(">>>config", cfg)
 	// Database Setup
 
 	// setup router
 	router := http.NewServeMux()
 
-	router.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("Welcome to students api"))
-	})
+	router.HandleFunc("POST /api/students", student.New())
 
 	// setup server
 	server := http.Server{
@@ -54,6 +51,7 @@ func main() {
 	err := server.Shutdown(ctx)
 	if err != nil {
 		slog.Error("Failed to shutdown server", slog.String("error", err.Error()))
+		return
 	}
 
 	slog.Info("server shutdown successfully")
